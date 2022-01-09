@@ -1,9 +1,13 @@
 <?php
 
+namespace Alura\Arquitetura\Infra\Aluno;
+
+use AlunoNaoEncontrado;
 use Alura\Arquitetura\Dominio\Aluno\Aluno;
 use Alura\Arquitetura\Dominio\Aluno\RepositorioAluno;
 use Alura\Arquitetura\Dominio\Aluno\Telefone;
 use Alura\Arquitetura\Dominio\CPF;
+use PDO;
 
 class RepositorioAlunoPdo implements RepositorioAluno
 {
@@ -58,7 +62,7 @@ class RepositorioAlunoPdo implements RepositorioAluno
     {
         $primeiraLinha = $dadosAluno[0];
         $aluno = Aluno::dadosAlunos($primeiraLinha['cpf'], $primeiraLinha['nome'], $primeiraLinha['email']);
-        $telefones = array_filter($dadosAluno, fn ($linha) => $linha['ddd'] !== null && $linha['numero']);
+        $telefones = array_filter((array)$dadosAluno, fn ($linha) => $linha['ddd'] !== null && $linha['numero']);
         foreach($telefones as $linha) {
             $aluno->adicionarTelefone($linha['ddd'], $linha['numero']);
 
@@ -75,10 +79,11 @@ class RepositorioAlunoPdo implements RepositorioAluno
         $stmt = $this->conexao->query($sql);
 
         $listaDadosAlunos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        /** @var array $alunos */
         $alunos = [];
 
         foreach($listaDadosAlunos as $dadosAluno) {
-            if (!array_key_exists($dadosAluno['cpf'], $alunos)) {
+            if (!array_key_exists($dadosAluno['cpf'], (array)$alunos)) {
                 $dadosAluno['cpf'] = Aluno::dadosAlunos(
                     $dadosAluno['cpf'],
                     $dadosAluno['nome'],
@@ -89,6 +94,6 @@ class RepositorioAlunoPdo implements RepositorioAluno
             $alunos[$dadosAluno['cpf']]->adicionarTelefone($dadosAluno['ddd'], $dadosAluno['numero']);
         }
 
-        return array_values($alunos);
+        return array_values((array)$alunos);
     }
 }

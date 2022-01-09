@@ -24,7 +24,7 @@ class Aluno
         $this->email = $email;
     }
 
-    public function adicionarTelefone(string $ddd, string $numero)
+    public function adicionarTelefone(string $ddd, string $numero): static
     {
         $this->telefones[] = new Telefone($ddd, $numero);
         return $this;
@@ -48,7 +48,7 @@ class Aluno
     /*
     * @return Telefone[]
     */
-    public function telefones(): array
+    public function telefones(): Telefone
     {
         return $this->telefones;
     }
