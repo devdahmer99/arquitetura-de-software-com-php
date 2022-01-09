@@ -37,9 +37,11 @@ class RepositorioAlunoPdo implements RepositorioAluno
 
     public function buscarAlunoPorCPF(CPF $cpf): Aluno
     {
-        $sql = 'SELECT cpf, nome, email, ddd, numero as numero_telefone FROM alunos 
+        $sql = 'SELECT cpf, nome, email, ddd, numero as numero_telefone
+                FROM alunos 
                 LEFT JOIN telefones on telefones.cpf_aluno = alunos.cpf 
                 WHERE alunos.cpf = ?';
+
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindValue('1', (string) $cpf);
         $stmt->execute();
@@ -50,5 +52,43 @@ class RepositorioAlunoPdo implements RepositorioAluno
         }
 
         return $this->mapearAluno($dadosAluno);
+    }
+
+    private function mapearAluno(string $dadosAluno): Aluno
+    {
+        $primeiraLinha = $dadosAluno[0];
+        $aluno = Aluno::dadosAlunos($primeiraLinha['cpf'], $primeiraLinha['nome'], $primeiraLinha['email']);
+        $telefones = array_filter($dadosAluno, fn ($linha) => $linha['ddd'] !== null && $linha['numero']);
+        foreach($telefones as $linha) {
+            $aluno->adicionarTelefone($linha['ddd'], $linha['numero']);
+
+        }
+
+        return $aluno;
+    }
+
+    public function buscarTodos(): array
+    {
+        $sql = 'SELECT cpf, nome, email, ddd, numero as numero_telefone FROM alunos
+                LEFT JOIN telefones ON telefones.cpf = alunos.cpf';
+
+        $stmt = $this->conexao->query($sql);
+
+        $listaDadosAlunos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $alunos = [];
+
+        foreach($listaDadosAlunos as $dadosAluno) {
+            if (!array_key_exists($dadosAluno['cpf'], $alunos)) {
+                $dadosAluno['cpf'] = Aluno::dadosAlunos(
+                    $dadosAluno['cpf'],
+                    $dadosAluno['nome'],
+                    $dadosAluno['email']
+                );
+            }
+
+            $alunos[$dadosAluno['cpf']]->adicionarTelefone($dadosAluno['ddd'], $dadosAluno['numero']);
+        }
+
+        return array_values($alunos);
     }
 }
