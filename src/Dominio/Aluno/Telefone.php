@@ -4,7 +4,7 @@ namespace Alura\Arquitetura\Dominio\Aluno;
 
 use http\Exception\InvalidArgumentException;
 
-class Telefone implements \Stringable
+class Telefone implements \Stringable, \Countable
 {
     private string $ddd;
     private string $numero;

@@ -25,10 +25,19 @@ class Aluno
         $this->cpf = $cpf;
         $this->nome = $nome;
         $this->email = $email;
+        $this->telefones = [];
     }
 
-    public function adicionarTelefone(string $ddd, string $numero): static
+    /**
+     * @throws \Exception
+     */
+    public function adicionarTelefone(string $ddd, string $numero): self
     {
+        if (count($this->telefones) === 2) {
+            throw new \Exception('Aluno já possui dois numeros cadastrados. Não pode adicionar
+            outro');
+        }
+
         $this->telefones[] = new Telefone($ddd, $numero);
         return $this;
     }

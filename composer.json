@@ -6,6 +6,6 @@
   },
   "require": {
     "ext-pdo": "*",
-    "ext-http": "*"
+    "phpunit/phpunit": "^9.5"
   }
 }

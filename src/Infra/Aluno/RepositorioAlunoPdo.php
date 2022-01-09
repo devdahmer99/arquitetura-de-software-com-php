@@ -79,7 +79,6 @@ class RepositorioAlunoPdo implements RepositorioAluno
         $stmt = $this->conexao->query($sql);
 
         $listaDadosAlunos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        /** @var array $alunos */
         $alunos = [];
 
         foreach($listaDadosAlunos as $dadosAluno) {
