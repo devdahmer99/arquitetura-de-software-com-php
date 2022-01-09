@@ -1,7 +1,11 @@
 <?php
 
+use Alura\Arquitetura\App\Aluno\MatricularAluno\MatricularAluno;
+use Alura\Arquitetura\App\Aluno\MatricularAluno\MatricularAlunoDto;
 use Alura\Arquitetura\Dominio\Aluno\Aluno;
-use Alura\Infra\Aluno\RepositorioDeAlunoEmMemoria;
+use Alura\Arquitetura\Dominio\Aluno\LogDeAlunoMatriculado;
+use Alura\Arquitetura\Dominio\PublicadorDeEvento;
+use Infra\Aluno\RepositorioDeAlunoEmMemoria;
 
 require_once 'vendor/autoload.php';
 
@@ -11,8 +15,8 @@ $email = $argv[3];
 $telefone = $argv[4];
 $ddd = $argv[5];
 
-$aluno = Aluno::dadosAlunos($cpf, $nome, $email)
-    ->adicionarTelefone($ddd, $telefone);
+$publicador = new PublicadorDeEvento();
+$publicador->adicionarOuvinte(new LogDeAlunoMatriculado());
+$useCase = new MatricularAluno(new RepositorioDeAlunoEmMemoria(), $publicador);
 
-$repositorio = new RepositorioDeAlunoEmMemoria();
-$repositorio->adicionarAluno($aluno);
+$useCase->executa(new MatricularAlunoDto($cpf, $nome, $email));
