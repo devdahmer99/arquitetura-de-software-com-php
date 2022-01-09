@@ -5,6 +5,9 @@ namespace Alura\Arquitetura\Dominio\Aluno;
 use Alura\Arquitetura\Dominio\CPF;
 use Alura\Arquitetura\Dominio\Email;
 
+/**
+ * @method indicante()
+ */
 class Aluno
 {
     private string $cpf;

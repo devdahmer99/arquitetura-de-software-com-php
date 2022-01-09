@@ -2,24 +2,34 @@
 
 namespace Alura\Arquitetura\Dominio\Indicacao;
 
-use Alura\Arquitetura\Aluno\Aluno;
+use Alura\Arquitetura\Dominio\Aluno\Aluno;
 use DateTimeImmutable as DateTimeImmutableAlias;
 
 class Indicacao
 {
     private Aluno $indicante;
-    private Aluno $indicaddo;
+    private Aluno $indicado;
     private DateTimeImmutableAlias $data;
 
     /**
      * @param Aluno $indicante
-     * @param Aluno $indicaddo
+     * @param Aluno $indicado
      */
-    public function __construct(Aluno $indicante, Aluno $indicaddo)
+    public function __construct(Aluno $indicante, Aluno $indicado)
     {
         $this->indicante = $indicante;
-        $this->indicaddo = $indicaddo;
+        $this->indicado = $indicado;
 
         $this->data = new \DateTimeImmutable();
+    }
+
+    public function indicante(Aluno $alunoIndicante): Aluno
+    {
+        return $this->indicante;
+    }
+
+    public function indicado(Aluno $alunoIndicado): Aluno
+    {
+        return $this->indicado;
     }
 }
